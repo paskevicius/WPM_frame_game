@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 20px; max-width: 300px; }
+    .container { width: 100%; }
+    .input-box { width: 90%; padding: 10px; font-size: 16px; }
+    #timer, #score { font-size: 18px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Typing Speed Game</h2>
+    <p>Type as many words as you can in 30 seconds!</p>
+    <div id="timer">Time Left: 30</div>
+    <div id="score">Score: 0</div>
+    <input type="text" class="input-box" id="wordInput" placeholder="Start typing..." disabled>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <script>
+    let timer = 30;
+    let score = 0;
+    let interval;
+    let wordInput = document.getElementById('wordInput');
+    const words = ["apple", "banana", "orange", "grape", "kiwi", "melon", "berry"];
+
+    function startGame() {
+      // Reset game state
+      timer = 30;
+      score = 0;
+      document.getElementById('timer').innerText = `Time Left: ${timer}`;
+      document.getElementById('score').innerText = `Score: ${score}`;
+      wordInput.value = '';
+      wordInput.disabled = false;
+      wordInput.placeholder = 'Type the word...';
+
+      // Display a random word
+      showNewWord();
+
+      // Start the countdown timer
+      interval = setInterval(countdown, 1000);
+
+      // Add event listener for word submission
+      wordInput.addEventListener('keypress', handleInput);
+    }
+
+    function countdown() {
+      if (timer > 0) {
+        timer--;
+        document.getElementById('timer').innerText = `Time Left: ${timer}`;
+      } else {
+        endGame();
+      }
+    }
+
+    function showNewWord() {
+      const randomWord = words[Math.floor(Math.random() * words.length)];
+      wordInput.placeholder = `Type: ${randomWord}`;
+      wordInput.dataset.currentWord = randomWord;
+    }
+
+    function handleInput(event) {
+      if (event.key === 'Enter') {
+        const currentWord = wordInput.dataset.currentWord;
+        if (wordInput.value.trim() === currentWord) {
+          score++;
+          document.getElementById('score').innerText = `Score: ${score}`;
+          wordInput.value = '';
+          showNewWord();
+        }
+      }
+    }
+
+    function endGame() {
+      clearInterval(interval);
+      wordInput.disabled = true;
+      wordInput.placeholder = `Game Over! Your score: ${score}`;
+      wordInput.removeEventListener('keypress', handleInput);
+      alert(`Time's up! You scored ${score} words.`);
+    }
+  </script>
+</body>
+</html>
